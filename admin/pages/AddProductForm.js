@@ -201,7 +201,7 @@ export default function AddProductForm() {
          description:description,
          quantity:quantity,
          category_id:category_id,
-
+        
         
       }).then(()=>{
         alert('Product added successfully');
@@ -443,6 +443,20 @@ export default function AddProductForm() {
      </Col>
    </Form.Group><br/>
    
+   <Form.Group as={Row} controlId="formHorizontalDescription">
+     <Form.Label column lg={2} >
+     Description :
+     </Form.Label>
+     <Col >
+       <Form.Control type="text" placeholder="about the product" 
+       onChange={(event)=> {
+         setDescription(event.target.value);
+       }}
+       />
+     </Col>
+   </Form.Group><br/>
+   
+
        <div align="center">
        <Button  type="submit"   style={{fontSize:'20px',width:'200px'}} >Submit</Button>
        </div>

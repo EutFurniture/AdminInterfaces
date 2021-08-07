@@ -26,7 +26,7 @@ import Catergory from '../../../assets/category2.jpg'
 import Divider from '@material-ui/core/Divider';
 import chair from '../../../assets/chair.jpg'
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-
+import {useParams} from "react-router-dom"
 
 
 import { mainListItems, Logout } from './listItems';
@@ -236,6 +236,24 @@ export default function ProductInfo() {
    
     const classes = useStyles();
     const [open, setOpen] = React.useState(true);
+    const { ID } = useParams();
+    const [Dt, setDt] = useState([])
+
+    useEffect(() => {
+      const fetchData = async () => {
+          const response = await axios.get('http://localhost:3001/viewGift', {
+              params: {
+                  ID: ID,
+                  
+              }
+          });
+    
+          setDt(response.data[0]);
+             console.log(response.data[0]);
+      };
+      fetchData();
+    }, [ID]);
+    
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -313,29 +331,15 @@ export default function ProductInfo() {
                   <strong> GIFT INFORMATION </strong>
                 </Typography>
                
-                <div className={classes.formrow}>
-                  <div className={classes.formleft}>
-                  <label className={classes.formlabel1}>Gift ID : </label><br/><br/>
-                  <label className={classes.formlabel1}>Gift Name : </label><br/><br/>
-                  <label className={classes.formlabel1}>Price : </label><br/><br/>
-                  <label className={classes.formlabel1}>Quantity : </label><br/><br/>
-                  <label className={classes.formlabel1}>Product Images : </label><br/><br/><br/><br/><br/>
-                  
+                <div ><br/>
+                  <div style={{display:'flex'}}><label className={classes.formlabel1}><b style={{marginRight:'65px'}}>Gift ID :</b>{Dt.ID}</label></div>
+                  <label className={classes.formlabel1}><b style={{marginRight:'30px'}}>Gift Name :</b > {Dt.name}</label><br/>
+                  <label className={classes.formlabel1}><b>Gift Image :</b></label><br/><img style={{marginLeft:'120px'}} src={`/${Dt.gift_img}`} className="image1" /><br/><br/>
+                  <label className={classes.formlabel1}><b style={{marginRight:'70px'}}>Price : </b>{Dt.price}</label><br/>       
+                  <label className={classes.formlabel1}><b style={{marginRight:'40px'}}>Quantity :</b> {Dt.quantity} </label><br/>
                   </div>
-                  <div className={classes.formright1}>
-                  <p className={classes.datas}>1</p>
-                  <p className={classes.datas}>Chair</p>
-                  <p className={classes.datas}>Rs.2,000</p>
-                  <p className={classes.datas}>4</p>
-                  <p className={classes.datas}> <img src={chair} className='image2' alt='/sofa'/></p>
-                
-                 
-                  </div>
-                </div>
             
-            <div>
-          
-                </div>
+            
            </div>
             </Paper>
          

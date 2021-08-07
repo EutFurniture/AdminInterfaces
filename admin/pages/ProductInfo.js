@@ -1,6 +1,8 @@
 
-import React from 'react'
+import React,{useEffect,useState} from 'react'
 import clsx from 'clsx';
+import axios from "axios"
+import { useParams } from 'react-router-dom';
 
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 
@@ -22,7 +24,7 @@ import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
 import sofa1 from '../../../assets/sofa1.jpg'
 import sofa3 from '../../../assets/sofa3.jpg'
-
+import "../css/manageEmployee.css";
 
 import { mainListItems, Logout } from './listItems';
 
@@ -173,23 +175,10 @@ textareabox:{
     border:'none',
     backgroundColor:'#E1F4FF',
 },
-formrow:{
- gridTemplateColumns:'1fr 3fr',
- display:'flex'
-},
-formleft:{
-  width:'200px',
-  marginTop:'20px',
-  marginBottom:'30px',
-  marginLeft:'20px'
-},
-formright1:{
-  width:'800px',
-  marginTop:'10px',
-  marginBottom:'20px'
-},
+
+
 formlabel1:{
-  marginBottom:'32px',
+  marginBottom:'20px',
   fontSize:'16px', 
   
 },
@@ -231,6 +220,24 @@ export default function ProductInfo() {
    
     const classes = useStyles();
     const [open, setOpen] = React.useState(true);
+    const { product_id } = useParams();
+    const [Dt, setDt] = useState([])
+
+    useEffect(() => {
+      const fetchData = async () => {
+          const response = await axios.get('http://localhost:3001/viewProduct', {
+              params: {
+                  product_id: product_id,
+                  
+              }
+          });
+    
+          setDt(response.data[0]);
+             console.log(response.data[0]);
+      };
+      fetchData();
+    }, [product_id]);
+    
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -304,40 +311,22 @@ export default function ProductInfo() {
                
              
             <div >
-           <Typography style={{fontSize:'30px',marginLeft:'20px'}} color="inherit" align="left" width="100%" noWrap className={classes.title}>
-                  <strong> PRODUCT INFORMATION </strong>
+           <Typography  style={{fontSize:'30px',marginLeft:'20px'}} color="inherit" align="left" width="100%" noWrap className={classes.title}>
+                  <strong align="center"> PRODUCT INFORMATION </strong>
+                
                 </Typography>
-               
-                <div className={classes.formrow}>
-                  <div className={classes.formleft}>
-                  <label className={classes.formlabel1}>Product ID : </label><br/><br/>
-                  <label className={classes.formlabel1}>Product Name : </label><br/><br/>
-                  <label className={classes.formlabel1}>Price : </label><br/><br/>
-                  <label className={classes.formlabel1}>Product Images : </label><br/><br/><br/><br/><br/>
-                  <label className={classes.formlabel1}>Product Category : </label><br/><br/>
-                  <label className={classes.formlabel1}>Material : </label><br/><br/>
-                  <label className={classes.formlabel1}>Quantity : </label><br/><br/>
-                  <label className={classes.formlabel1}>Description : </label><br/>
+                
+                <div ><br/>
+                  <div style={{display:'flex'}}><label className={classes.formlabel1}><b style={{marginRight:'65px'}}>Product ID :</b>{Dt.product_id}</label></div>
+                  <label className={classes.formlabel1}><b style={{marginRight:'30px'}}>Product Name :</b > {Dt.name}</label><br/>
+                  <label className={classes.formlabel1}><b style={{marginRight:'100px'}}>Price : </b>{Dt.price}</label><br/>
+                  <label className={classes.formlabel1}><b>Product Image :</b></label><br/><img style={{marginLeft:'160px'}} src={`/${Dt.product_img}`} className="image1" /><br/><br/>
+                  <label className={classes.formlabel1}><b style={{marginRight:'80px'}}>Material :</b> {Dt.material}</label><br/>
+                  <label className={classes.formlabel1}><b style={{marginRight:'80px'}}>Quantity :</b> {Dt.quantity} </label><br/>
+                  <label className={classes.formlabel1}><b style={{marginRight:'50px'}}>Description :</b> {Dt.description}</label><br/>
                   </div>
-                  <div className={classes.formright1}>
-                  <p className={classes.datas}>1</p>
-                  <p className={classes.datas}>Sofa</p>
-                  <p className={classes.datas}>Rs.25,000</p>
-                  <p className={classes.datas}> <img src={sofa1} className='image1' alt='/sofa'/><img src={sofa3} className='image1' alt='/sofa'/></p>
-                  <p className={classes.datas}>Sofa Set</p>
-                  <p className={classes.datas}>Fabric</p>
-                  <p className={classes.datas}>10</p>
-                  <p className={classes.datas}>Firm and Comfortable: The cushion design conforms to the human body mechanics, both comfortable and durable.Tips:The color of sofa may show bluish grey under natural light or cold light.<br/>
-Space Saving: Sofa is suitable for small space, compact and convenient.Couch dimensions: 77.55 x 27.56 x 35.43 inch. Weight capacity: 660 lbs.
-Easy Assembly: Easy to install, it only takes 10 minutes to complete the installation, very convenient.
-Convertible Design: Modular sofa, can be taken apart for use. According to their own needs free combination.
-After Sale:This sofa is divided into 2 boxes, may be delivered at different times.If there is any question, please feel free to contact us, we will response to you in 24 hours.</p>
-                  </div>
-                </div>
+              
             
-            <div>
-          
-                </div>
            </div>
             </Paper>
          

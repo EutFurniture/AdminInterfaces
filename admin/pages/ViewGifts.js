@@ -57,7 +57,7 @@ export default function ViewGifts() {
               <td><img src={record.gift_img} className='image' alt='/gift'/></td>
               <td>{record.quantity}</td>
               <td align="center">
-              <Link to='/admin/pages/GiftInfo'  className="viewbtn" >View</Link>
+              <Link to={location=> `/Gift/${record.ID}`}  className="viewbtn" >View</Link>
                 <Link to='/admin/pages/EditGifts' className="updatebtn"> Edit</Link>
                 <Link 
                   className="deletebtn"

@@ -1,7 +1,6 @@
-import React from 'react';
+import React,{useEffect,useState} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
-import { useState } from 'react';
 import clsx from 'clsx';
 
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
@@ -33,6 +32,7 @@ import Form from 'react-bootstrap/Form';
 import { Button } from 'react-bootstrap';
 import { Row } from 'react-bootstrap';
 import { Col } from 'react-bootstrap';
+import {useParams} from 'react-router-dom'
 
 import { mainListItems, Logout } from './listItems';
 import category6 from '../../../assets/category7.jpg'
@@ -164,6 +164,46 @@ export default function EditCategory() {
   const [open, setOpen] = React.useState(true);
   const [state,setState]=useState({file:'',product_img:'',message:'',success:false})
   const[name,setName]=useState("");
+  const {category_id} = useParams();
+  const [Dt, setDt] = useState([])
+  const [newName, setNewName] = useState(0);
+  const [newDate, setNewDate] = useState(0);
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+        const response = await axios.get('http://localhost:3001/viewCategory', {
+            params: {
+               category_id: category_id,
+                
+            }
+        });
+  
+        setDt(response.data[0]);
+           console.log(response.data[0]);
+    };
+    fetchData();
+  }, [category_id]);
+
+  const [categoryList,setCategoryList]=useState([])
+ useEffect(()=>{
+   axios.get("http://localhost:3001/loadCategory").then((response)=>{
+     setCategoryList(response.data)
+   })
+ },[])
+  
+  const updateCategories = (category_id) => {
+    axios.put("http://localhost:3001/updateCategory", {name: newName,date:newDate,category_id: category_id}).then(
+      (response) => {
+        
+        setCategoryList(Dt.map((val) => {
+          return val.category_id === category_id ? {category_id: val.category_id, name: val.name, date: val.date,  name: newName,date:newDate} : val
+          
+        }))
+     }
+    )
+    alert("Category added successfully")  
+  };
   
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -262,26 +302,27 @@ export default function EditCategory() {
             {/* Recent Orders */}
             <Grid item xs={11} direction="row"  >
             
-  
+            {categoryList.map((val)=>{
+            return(
             <div >
               <Paper className={classes.paper}>
               <Typography component="h1" variant="h6" color="inherit"  align="center" width="100%" noWrap className={classes.title}>
               <strong>UPDATE CATEGORY DETAILS</strong>
             </Typography><br/>
 
-            
-            <Form  >
-
+             
+            <Form>
+             
 <Form.Group as={Row} controlId="formHorizontalName">
      <Form.Label column lg={2} >
        Name :
      </Form.Label>
      <Col >
-       <Form.Control type="text" placeholder="chair,table and etc" 
+       <Form.Control type="text" defaultValue={Dt.name}
        onChange={(event)=> {
-         setName(event.target.value);
+         setNewName(event.target.value);
        }}
-       />
+       ></Form.Control>
      </Col>
    </Form.Group><br/>
 
@@ -290,7 +331,9 @@ export default function EditCategory() {
      Date :
      </Form.Label>
      <Col >
-       <Form.Control type="date" placeholder="" 
+       <Form.Control type="text" defaultValue={Dt.date}  onChange={(event)=> {
+         setNewDate(event.target.value);
+       }}
      
        />
      </Col>
@@ -298,7 +341,7 @@ export default function EditCategory() {
   
    
   <div align="center">
-       <Button  type="submit"   style={{fontSize:'20px',width:'200px'}} >Update</Button>
+       <Button  type="submit"   style={{fontSize:'20px',width:'200px'}} onClick={() => {updateCategories(Dt.category_id)}} >Update</Button>
        </div><br/><br/>
        <div >
        <div style={{marginTop:'30px'}}>
@@ -310,9 +353,13 @@ export default function EditCategory() {
        </div>
 
 </Form>
+           
             
               </Paper>
+              
               </div>
+              )
+            })}
             </Grid>
  
           </Grid>

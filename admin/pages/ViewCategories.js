@@ -102,7 +102,7 @@ export default function Categories() {
               <td>{record.date}</td>
               <td align="center">
                 
-                <Link to='/admin/pages/EditCategory' className="updatebtn" onClick={toggleEdit}>  Edit </Link>
+                <Link to={location=> `/Category/${record.category_id}`} className="updatebtn" >  Edit </Link>
                
                 <Link className="deletebtn" onClick={()=>{deleteCategory(record.category_id)}}>  Delete  </Link>
                   
@@ -111,8 +111,7 @@ export default function Categories() {
           )
         })}
 
-          
-            
+             
           
         </tbody> 
       </Table>
