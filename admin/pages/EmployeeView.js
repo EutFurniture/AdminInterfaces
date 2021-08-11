@@ -119,7 +119,7 @@ const [modal, setModal] = useState(false);
                             View
                           </Link>
                           
-                          <Link to={location=> `/admin/pages/UpdateEmployee/${record.id}`} className="updatebtn ">
+                          <Link to={location=> `/EmpEdit/${record.id}`} className="updatebtn ">
                             Edit
                           </Link>
                           

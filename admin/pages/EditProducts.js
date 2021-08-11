@@ -12,11 +12,9 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
-import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Link from '@material-ui/core/Link';
 import MenuIcon from '@material-ui/icons/Menu';
@@ -32,10 +30,10 @@ import Form from 'react-bootstrap/Form';
 import { Button } from 'react-bootstrap';
 import { Row } from 'react-bootstrap';
 import { Col } from 'react-bootstrap';
-
+import { useParams } from 'react-router-dom';
 import { mainListItems, Logout } from './listItems';
-
-
+import Divider from '@material-ui/core/Divider';
+import Grid from '@material-ui/core/Grid';
 
 function Copyright() {
   return (
@@ -51,7 +49,7 @@ function Copyright() {
 }
 
 
-const drawerWidth = 240;
+const drawerWproduct_idth = 240;
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -69,15 +67,15 @@ const useStyles = makeStyles((theme) => ({
   },
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
-    transition: theme.transitions.create(['width', 'margin'], {
+    transition: theme.transitions.create(['wproduct_idth', 'margin'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
   },
   appBarShift: {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(['width', 'margin'], {
+    marginLeft: drawerWproduct_idth,
+    wproduct_idth: `calc(100% - ${drawerWproduct_idth}px)`,
+    transition: theme.transitions.create(['wproduct_idth', 'margin'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
@@ -85,7 +83,7 @@ const useStyles = makeStyles((theme) => ({
   menuButton: {
     marginRight: 36,
   },
-  menuButtonHidden: {
+  menuButtonHproduct_idden: {
     display: 'none',
   },
   title: {
@@ -96,21 +94,21 @@ const useStyles = makeStyles((theme) => ({
   drawerPaper: {
     position: 'relative',
     whiteSpace: 'nowrap',
-    width: drawerWidth,
-    transition: theme.transitions.create('width', {
+    wproduct_idth: drawerWproduct_idth,
+    transition: theme.transitions.create('wproduct_idth', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
   },
   drawerPaperClose: {
-    overflowX: 'hidden',
-    transition: theme.transitions.create('width', {
+    overflowX: 'hproduct_idden',
+    transition: theme.transitions.create('wproduct_idth', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
-    width: theme.spacing(7),
+    wproduct_idth: theme.spacing(7),
     [theme.breakpoints.up('sm')]: {
-      width: theme.spacing(9),
+      wproduct_idth: theme.spacing(9),
     },
   },
   appBarSpacer: theme.mixins.toolbar,
@@ -147,7 +145,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const styles = {
-  side:{
+  sproduct_ide:{
     backgroundColor:'rgb(37,37,94)',
   },
  
@@ -162,14 +160,16 @@ export default function AddProductForm() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
   const [state,setState]=useState({file:'',product_img:'',message:'',success:false})
-  const[name,setName]=useState("");
-  const[price,setPrice]=useState("");
-  const[description,setDescription]=useState("");
-  const[quantity,setQuantity]=useState("");
-  const[material,setMaterial]=useState("");
-  const[category_id,setCategoryID]=useState("");
-  const[image,setImage]=useState("");
+  const[newName,setNewName]=useState("");
+  const[newPrice,setNewPrice]=useState("");
+  const[newDescription,setNewDescription]=useState("");
+  const[newQuantity,setNewQuantity]=useState("");
+  const[newMaterial,setNewMaterial]=useState("");
+  const[newCategory_id,setNewCategory_id]=useState("");
+  const[newProduct_img,setNewProduct_img]=useState("");
   const [progressbar,setProgressbar] = useState(0);
+  const {product_id} = useParams();
+  const [Dt, setDt] = useState([])
 
   const [typeList,setTypeList]=useState([])
   useEffect(()=>{
@@ -179,56 +179,53 @@ export default function AddProductForm() {
   },[])
   
 
-  const submitForm =(e) =>{
-    e.preventDefault();
+  const [productList,setProductList]=useState([])
+    useEffect(()=>{
+      axios.get("http://localhost:3001/loadProduct").then((response)=>{
+        setProductList(response.data)
+      })
+    },[])
+
+    useEffect(() => {
+      const fetchData = async () => {
+          const response = await axios.get('http://localhost:3001/viewProduct', {
+              params: {
+                  product_id: product_id,
+                  
+              }
+          });
+    
+          setDt(response.data[0]);
+             console.log(response.data[0]);
+      };
+      fetchData();
+    }, [product_id]);
+    
+    const updateProducts = (product_id) => {
       
-    if(state.file)
-    {
-      let formData=new FormData();
-      formData.append('file',state.file)
-
-   axios.post('http://localhost:3001/imageUpload',formData,{
-        'content-Type':'multipart/form-data',
-      })
-
-      axios.post('http://localhost:3001/addProducts', {
-     
-       
-        image:state.file.name,
-        name:name,
-         price:price,
-         material:material,
-         description:description,
-         quantity:quantity,
-         category_id:category_id,
-
-        
-      })
-
-}else{
-  setState({
-    ...state,
-    message:'please select image'
-  })
- 
-}
-
-}
-
-  const handleInput =(e) =>{
-    let reader =new FileReader();
-    let file=e.target.files[0]
-    reader.onloadend =() =>{
-      setState({
-        ...state,
-        file:file,
-        product_img:reader.result,
-        message:""
-      })
-    }
-    reader.readAsDataURL(file);
-  }
-
+        let formData=new FormData();
+        formData.append('file',state.file) 
+        axios.post('http://localhost:3001/imageUpload',formData,{
+            'content-Type':'multipart/form-data',
+          })
+    
+      axios.put("http://localhost:3001/updateProduct", {name: newName,price:newPrice,material:newMaterial,category_id:newCategory_id,product_img:newProduct_img,quantity:newQuantity,product_id: product_id}).then(
+        (response) => {
+          
+          setProductList(Dt.map((val) => {
+            return val.product_id === product_id ? {product_id: val.product_id, name: val.name, price: val.price,material:val.material,category_id:val.category_id,product_img:val.product_img,quantity:val.quantity, 
+              name: newName,price:newPrice,material:newMaterial,category_id:newCategory_id,product_img:newProduct_img,quantity:newQuantity} : val
+            
+          }))
+      
+    
+      alert("Product Edited successfully")  
+      
+        }
+      
+      )
+      
+    };
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -265,7 +262,7 @@ export default function AddProductForm() {
             color="inherit"
             aria-label="open drawer"
             onClick={handleDrawerOpen}
-            className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
+            className={clsx(classes.menuButton, open && classes.menuButtonHproduct_idden)}
           >
             <MenuIcon />
           </IconButton>
@@ -282,7 +279,7 @@ export default function AddProductForm() {
   
           </IconButton>
           <Menu
-        id="simple-menu"
+        product_id="simple-menu"
         anchorEl={anchorEl}
         keepMounted
         open={Boolean(anchorEl)}
@@ -293,7 +290,7 @@ export default function AddProductForm() {
       </Menu>
         </Toolbar>
       </AppBar>
-      <div style={styles.side}>
+      <div style={styles.sproduct_ide}>
       <Drawer
         variant="permanent"
         classes={{
@@ -316,7 +313,7 @@ export default function AddProductForm() {
       </div>
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
-        <Container maxWidth="lg" className={classes.container}>
+        <Container maxWproduct_idth="lg" className={classes.container}>
           <Grid container spacing={18}>
         
             
@@ -328,32 +325,32 @@ export default function AddProductForm() {
   
             <div >
               <Paper className={classes.paper}>
-              <Typography component="h1" variant="h6" color="inherit"  align="center" width="100%" noWrap className={classes.title}>
+              <Typography component="h1" variant="h6" color="inherit"  align="center" wproduct_idth="100%" noWrap className={classes.title}>
               <strong>UPDATE PRODUCT DETAILS</strong>
             </Typography><br/>
-            <Form  onSubmit={submitForm} >
+            <Form >
 
-<Form.Group as={Row} controlId="formHorizontalName">
+<Form.Group as={Row} controlproduct_id="formHorizontalName">
      <Form.Label column lg={2} >
       Product Name :
      </Form.Label>
      <Col >
-       <Form.Control type="text" placeholder="chair,table and etc" 
+       <Form.Control type="text" defaultValue={Dt.name}
        onChange={(event)=> {
-         setName(event.target.value);
+         setNewName(event.target.value);
        }}
        />
      </Col>
    </Form.Group><br/>
 
-   <Form.Group as={Row} controlId="formHorizontalPrice">
+   <Form.Group as={Row} controlproduct_id="formHorizontalPrice">
      <Form.Label column lg={2} >
      Price :
      </Form.Label>
      <Col >
-       <Form.Control type="text" placeholder="Rs.xxxx.xx" 
+       <Form.Control type="text" defaultValue={Dt.price} 
        onChange={(event)=> {
-         setPrice(event.target.value);
+         setNewPrice(event.target.value);
        }}
        />
      </Col>
@@ -361,27 +358,24 @@ export default function AddProductForm() {
   
    
 
-<Form.Group as={Row} controlId="formHorizontalFile" className="mb-3">
+   <Form.Group as={Row} controlId="formHorizontalFile" className="mb-3">
      <Form.Label column lg={2}>
       Product Image :</Form.Label>
      <Col >
-       <Form.Control type="file" name="img" className={classes.imageInput} onChange={handleInput} />
+       <Form.Control type="text" name="img" defaultValue={Dt.product_img}   onChange={(event)=> {
+         setNewProduct_img(event.target.value);
+       }} />
      </Col>
      </Form.Group>  
-    
-{state.message && <h6 className={classes.mess}>{state.message}</h6>}            
-     <div style={{marginLeft:'227px'}}>
-{state.product_img && (<img src={state.product_img}  width="20%" height="20%"  alt="preview" />)}
-</div><br/>
 
-<Form.Group as={Row} controlId="formHorizontalQuantity">
+<Form.Group as={Row} controlproduct_id="formHorizontalQuantity">
      <Form.Label column lg={2} >
      Material :
      </Form.Label>
      <Col >
-       <Form.Control type="text" placeholder="Eg: wood" 
+       <Form.Control type="text" defaultValue={Dt.material}
        onChange={(event)=> {
-         setMaterial(event.target.value);
+         setNewMaterial(event.target.value);
        }}
        />
      </Col>
@@ -389,7 +383,7 @@ export default function AddProductForm() {
 
    
                        
-{/* <Form.Group as={Row} controlId="formHorizontalCategory">
+{/* <Form.Group as={Row} controlproduct_id="formHorizontalCategory">
 
      <Form.Label column lg={2} >
      Product Category :
@@ -406,13 +400,13 @@ export default function AddProductForm() {
      </Col>
    </Form.Group><br/> */}
 
-   <Form.Group as={Row} controlId="formHorizontalCategory">
+   <Form.Group as={Row} controlproduct_id="formHorizontalCategory">
 
      <Form.Label column lg={2} >
       Category ID:
      </Form.Label>
      <Col >
-       <Form.Control as="Select" name='type' onChange={(event)=> { setCategoryID(event.target.value); }} >
+       <Form.Control as="Select" name='type' onChange={(event)=> { setNewCategory_id(event.target.value); }} >
          <option>Select Category</option>
        {typeList.map((record)=>{return(
        <option value={record.category_id}>{record.category_id}-{record.name}</option>
@@ -425,22 +419,21 @@ export default function AddProductForm() {
    </Form.Group><br/>
   
 
-  
-   <Form.Group as={Row} controlId="formHorizontalQuantity">
+   <Form.Group as={Row} controlproduct_id="formHorizontalQuantity">
      <Form.Label column lg={2} >
      Quantity :
      </Form.Label>
      <Col >
-       <Form.Control type="text" placeholder="5" 
+       <Form.Control type="text" defaultValue={Dt.quantity}
        onChange={(event)=> {
-         setQuantity(event.target.value);
+         setNewQuantity(event.target.value);
        }}
        />
      </Col>
    </Form.Group><br/>
    
        <div align="center">
-       <Button  type="submit"   style={{fontSize:'20px',width:'200px'}} >Update</Button>
+       <Button  type="submit" onClick={() => {updateProducts(Dt.product_id)}}  style={{fontSize:'20px',width:'200px'}} >Update</Button>
        </div>
       
 

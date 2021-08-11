@@ -46,7 +46,7 @@ export default function Chart({title,data,dataKey,grid}){
   
     return(
         <div style={{backgroundColor:'#f0ffff'}} className="chart">
-            <h1 align='center' className="chartTitle">{title}</h1>
+            <h2 align='left' className="chartTitle"><b>{title}</b></h2>
             <ResponsiveContainer width="100%" aspect={3 / 1}>
                 <LineChart data={data}>
                     <XAxis dataKey="name" strokeWidth="3px" stroke="#ffb347"/>

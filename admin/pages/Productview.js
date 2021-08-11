@@ -57,7 +57,7 @@ export default function Productview() {
               <td>{record.quantity}</td>
               <td align="center">
                <Link to={location=> `/Product/${record.product_id}`} className="viewbtn" >View</Link>
-                <Link to='/admin/pages/EditProducts' className="updatebtn ">Edit</Link>
+               <Link to={location=> `/ProductEdit/${record.product_id}`}  className="updatebtn"> Edit</Link>
                 <Link  className="deletebtn" >Delete</Link>
               </td>
             </tr>

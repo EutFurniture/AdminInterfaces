@@ -232,7 +232,7 @@ const styles = {
 };
 
 
-export default function ProductInfo() {
+export default function GiftInfo() {
    
     const classes = useStyles();
     const [open, setOpen] = React.useState(true);

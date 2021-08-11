@@ -58,7 +58,7 @@ export default function ViewGifts() {
               <td>{record.quantity}</td>
               <td align="center">
               <Link to={location=> `/Gift/${record.ID}`}  className="viewbtn" >View</Link>
-                <Link to='/admin/pages/EditGifts' className="updatebtn"> Edit</Link>
+                <Link to={location=> `/GiftEdit/${record.ID}`}  className="updatebtn"> Edit</Link>
                 <Link 
                   className="deletebtn"
                  >

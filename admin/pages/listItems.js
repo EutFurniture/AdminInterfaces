@@ -5,6 +5,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 
+import AssessmentIcon from '@material-ui/icons/Assessment';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import PersonIcon from '@material-ui/icons/Person';
 import FormatListNumberedIcon from '@material-ui/icons/FormatListNumbered';
@@ -79,6 +80,13 @@ export const mainListItems = (
         <AssignmentReturnedIcon />
       </ListItemIcon>
       <ListItemText primary="Moving Items" />
+    </ListItem>
+
+    <ListItem  button component={Link} to="/GenerateReport">
+      <ListItemIcon style={{color:'white'}}>
+        <AssessmentIcon />
+      </ListItemIcon>
+      <ListItemText primary="Report Generation" />
     </ListItem>
   </div>
 );

@@ -43,6 +43,7 @@ import { mainListItems, Logout } from './listItems';
 import '../css/Dashboard.css'
 import Chart from '../../charts/Chart'
 import ShoppingBasket from '@material-ui/icons/ShoppingBasket';
+import { array } from 'yup/lib/locale';
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -176,7 +177,7 @@ const styles = {
 
 
 
-const DashboardNew=()=> {
+const GenerateReport=()=> {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
   const {todate}=useParams();
@@ -186,66 +187,27 @@ const DashboardNew=()=> {
   useEffect(()=>{
     axios.get("http://localhost:3001/CategoryNoChart").then((response)=>{
       setQuantityList(response.data)
-      //setCategoryList(response.data[0])
+      console.log(response)
     })
   },[])
 
-  const [empcount,setEmpCount]=useState([])
+  const [cusorderList,setCusOrderList]=useState([])
   useEffect(()=>{
-    axios.get("http://localhost:3001/EmployeeCount").then((response)=>{
-      setEmpCount(response.data)
+    axios.get("http://localhost:3001/Cus_OrderChart").then((response)=>{
+      setCusOrderList(response.data)
+      console.log(response)
     })
   },[])
 
-  const [cuscount,setCusCount]=useState([])
+  const [customercount,setCustomerCount]=useState([])
   useEffect(()=>{
     axios.get("http://localhost:3001/CustomerCount").then((response)=>{
-      setCusCount(response.data)
+      setCustomerCount(response.data)
+      console.log(response)
     })
   },[])
 
-  const [ordercount,setOrderCount]=useState([])
-  useEffect(()=>{
-    axios.get("http://localhost:3001/OrderCount").then((response)=>{
-      setOrderCount(response.data)
-    })
-  },[])
-
-  const [productcount,setProductCount]=useState([])
-  useEffect(()=>{
-    axios.get("http://localhost:3001/ProductCount").then((response)=>{
-      setProductCount(response.data)
-    })
-  },[])
-
-  const [catcount,setCatCount]=useState([])
-  useEffect(()=>{
-    axios.get("http://localhost:3001/CategoryCount").then((response)=>{
-      setCatCount(response.data)
-    })
-  },[])
-
-  const [return_count,setReturnCount]=useState([])
-  useEffect(()=>{
-    axios.get("http://localhost:3001/ReturnCount").then((response)=>{
-      setReturnCount(response.data)
-    })
-  },[])
-
-  const [delivercount,setDeliverCount]=useState([])
-  useEffect(()=>{
-    axios.get("http://localhost:3001/DeliverCount").then((response)=>{
-      setDeliverCount(response.data)
-    })
-  },[])
-
-  const [total_income,setTotalIncome]=useState([])
-  useEffect(()=>{
-    axios.get("http://localhost:3001/TotalIncome").then((response)=>{
-      setTotalIncome(response.data)
-    })
-  },[])
-
+  
   const [order,setOrder]=useState([])
   useEffect(()=>{
     axios.get("http://localhost:3001/Order").then((response)=>{
@@ -253,22 +215,19 @@ const DashboardNew=()=> {
     })
   },[])
 
-  const [emp,setEmp]=useState([])
-  useEffect(()=>{
-    axios.get("http://localhost:3001/loadEmployee").then((response)=>{
-      setEmp(response.data)
-    })
-  },[])
+const arr=quantityList.map(record=>record.quantity);
+const cat=quantityList.map(record=>record.name);
 
-  const [Rorder,setRorder]=useState([])
-  useEffect(()=>{
-    axios.get("http://localhost:3001/recentOrders").then((response)=>{
-      setRorder(response.data)
-    })
-  },[])
+const cus_quantity=cusorderList.map(record=>record.quantity);
+const cus_cat=cusorderList.map(record=>record.category_name);
 
+const month=customercount.map(record=>record.month);
+const count=customercount.map(record=>record.count);
+
+  // console.log(quantityList);
+  // const arr = Object.values(quantityList);
+  // console.log(arr)
   
-
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -367,151 +326,179 @@ const DashboardNew=()=> {
           <Grid container spacing={1}>
           
             <Grid item xs={12} >
-            <Paper className={classes.custom}>
-               <h1><b>SYSTEM OVERVIEW</b></h1>
-             
-               </Paper>  
-              <Paper className={fixedHeightPaper}>
-                 
+               <h1><b>SYSTEM ANALYTICS</b></h1>
+               </Grid> 
 
-                       <div className="cardcollection">
-                           <div className="card1">
-                               <AttachMoneyIcon style={{fontSize:'40px',marginTop:'10px'}} /> 
-                               <h2>Income</h2>
-                               {total_income.map((record)=>{
-                                 return(
-                                  <p style={{fontSize:'25px'}}>Rs.{record.income}</p>
-                                 )
-                               })}
-                           </div>
-
-                           <div className="card2">
-                           <AssignmentReturnedIcon style={{fontSize:'40px',marginTop:'10px'}}/>
-                               <h2>Returned Items</h2>
-                               {return_count.map((record)=>{
-                                 return(
-                                  <p style={{fontSize:'30px'}}>{record.returncount}</p>
-                                 )
-                               })}
-                           </div>
-
-                           <div className="card4">
-                           <PersonOutlineOutlinedIcon style={{fontSize:'40px',marginTop:'10px'}}/>
-                               <h2>Customers</h2>
-                               {cuscount.map((record)=>{
-                                 return(
-                                  <p style={{fontSize:'30px'}}>{record.cuscount}</p>
-                                 )
-                               })}
-                           </div>
-
-                           <div className="card3">
-                           <ShoppingCartIcon style={{fontSize:'40px',marginTop:'10px'}}/>
-                               <h2>Orders</h2>
-                               {ordercount.map((record)=>{
-                                 return(
-                                  <p style={{fontSize:'30px'}}>{record.ordcount}</p>
-                                 )
-                               })}
-                           </div>
-
-                           <div className="card5">
-                             <PeopleIcon style={{fontSize:'40px',marginTop:'10px'}}/>
-                               <h2>Employees</h2>
-                               {empcount.map((record)=>{
-                                 return(
-                                  <p style={{fontSize:'30px'}}>{record.count}</p>
-                                 )
-                               })}
-                             
-                           </div>
-                           <div className="card6">
-                           <ShoppingBasket style={{fontSize:'40px',marginTop:'10px'}}/>
-                               <h2>Products</h2>
-                               {productcount.map((record)=>{
-                                 return(
-                                  <p style={{fontSize:'30px'}}>{record.procount}</p>
-                                 )
-                               })}
-                           </div>
-                           <div className="card7">
-                           <PersonOutlineOutlinedIcon style={{fontSize:'40px',marginTop:'10px'}}/>
-                               <h2>Deliver Persons</h2>
-                               {delivercount.map((record)=>{
-                                 return(
-                                  <p style={{fontSize:'30px'}}>{record.deliver_count}</p>
-                                 )
-                               })}
-                           </div>
-                           <div className="card8">
-                           <AssignmentIcon style={{fontSize:'40px',marginTop:'10px'}}/>
-                               <h2>Categories</h2>
-                               {catcount.map((record)=>{
-                                 return(
-                                  <p style={{fontSize:'30px'}}>{record.catcount}</p>
-                                 )
-                               })}
-                           </div>
-                       </div>
+               <div style={{display:'flex'}}>
+               <Grid item xs={8} >
+                          <Paper>
                       <br/>
-                      
-            
+                       <h2 style={{marginLeft:'20px'}}><b>Customer Analytics-2021</b></h2>
+                     
+                       <Bar  style={{width:'1100px',marginLeft:'10px'}}
+      data={{
+        labels:month,
+        datasets:[{
+          label:'No of Customers per month',
+          data:count,
+          backgroundColor:'#4166f5',
+          barThickness:18
+        },
+        
+        
+        ]
+      }}
+      options={{
+        tooltips:{
+          mode:'index',
+          callbacks:{
+            label:function(toolTipItem){
+              return ("Revenue: $"+toolTipItem.value)
+            }
+          }
+
+        },
+        scales:{
+          xAxes:[
+            {
+              gridLines:{
+              color:'cyan'
+            },
+              scaleLabel:{
+                labelString:'Months',
+                display:true,
+                fontColor:'blue',
+                fontSize:20
+              },
+              ticks:{
+                fontColor:'green'
+              }
+            }
+          ],
+          yAxes:[
+          {
+            gridLines:{
+              color:'cyan'
+            },
+            scaleLabel:{
+                labelString:'Revenue',
+                display:true,
+                fontColor:'blue',
+                fontSize:20,
+              },
+            ticks:{
+              beginAtZero:true,
+              fontColor:'green',
+              
+            }
+          }
+          ]
+        }
+      }}
+      >
+
+      </Bar>     
+              </Paper>
+            </Grid>
+            <Grid item xs={8} style={{marginLeft:'20px'}}>
+              <Paper  style={{width:'390px',height:'470px'}} >
+               <DoughnutChart/>
+               <br/>
+             
+              </Paper>
+            </Grid>
+    </div>
+
+            <Grid item xs={12} >
+              <Paper className={fixedHeightPaper} >
+              <h1 align='center'>Recent Orders</h1>
             
              
-                <Chart  data={userData}  title="ORDER ANALYTICS" grid dataKey="Orders" />
-            </Paper>  
-            </Grid> 
-            </Grid>
-          
-          <div style={{display:'flex'}}>
-            <Grid style={{marginTop:'10px'}} item xs={6} >
-            <Paper >
-              <div style={{marginLeft:'20px'}}>
-               <h2><b>WORKING EMPLOYEES</b></h2>
-               </div><br/>
-               <Table striped bordered hover responsive>   
-                  <tbody>
-                  {emp.map((record)=>{
+                     <Table striped bordered hover responsive>
+                         <thead className="tableheading">
+                         <th>Order Item</th>
+                         <th>Customer Name</th>
+                         <th>Date</th>
+                         <th>Price</th>
+                         </thead>
+                         <tbody align='center' className="tablebody">
+                         {order.map((record)=>{
                                  return(
-                    <tr>
-                  
-                    <th align='center'><img src={`/${record.emp_img}`} style={{height:'50px',width:'50px',borderRadius:'30px'}}/></th>
-                    <th >{record.name}</th>
-                    <th>{record.role}</th>
-                    </tr>
-                                  )
-                                })}
-                  </tbody>
-              </Table>
-               </Paper>
+                         <tr>
+                             <td>{record.name}</td>
+                             <td>{record.cus_name}</td>
+                             <td>{record.o_date}</td>
+                             <td>{record.total_price}</td>
+                         </tr>
+                        
+                                 )
+                         })}
+                         </tbody>
+                     </Table>
+               
+              </Paper>
             </Grid>
+            
+        
+            <Grid item xs={12}  >
+              <Paper className={fixedHeightPaper}>
+                  <div className={classes.piechart}  display='flex'>
+                      <div className={classes.pieleft}>
+                          <h1 align='center'>Categories</h1>
+                          
+        
+              <Pie style={{width:'200px'}}
+         
+              data={{
+                labels:cat,
+                datasets:[{
+                  data:arr,
+                  backgroundColor:['red','orange','purple','blue','green','yellow','pink'],
+                },
+                ]
+              }
+              }
+     
+      >
 
-            <Grid style={{marginTop:'10px',marginLeft:'20px'}} item xs={6} >
-            <Paper >
-              <div style={{marginLeft:'20px'}}>
-               <h2><b>RECENT FIVE ORDERS</b></h2>
-               </div><br/>
-               <Table striped bordered hover responsive>   
-                  <tbody>
-                  {Rorder.map((record)=>{
-                                 return(
-                    <tr>
-                  
-                    <th><img src={`/${record.product_img}`} style={{height:'50px',width:'50px',marginLeft:'40px'}}/></th>
-                    <th >{record.name}</th>
-                    <th>{record.total_price}</th>
-                    </tr>
-                                  )
-                                })}
-                  </tbody>
-              </Table>
-               </Paper>
+      </Pie>
+     
+      </div>
+      <div className={classes.pieright}>
+      <h1 align='center'>Customized Orders</h1>
+              <Pie style={{width:'200px'}}
+      data={{
+        labels:cus_cat,
+        datasets:[{
+          data:cus_quantity,
+          backgroundColor:['red','orange','purple','blue','green'],
+        },
+        ]
+      }
+      }
+      >
+
+      </Pie>
+      </div>
+      </div>
+              </Paper>
             </Grid>
-            </div>
+            
+            <Grid item xs={12} >
+              <Paper className={fixedHeightPaper} >
+                <Chart  data={userData}  title="Order Analytics" grid dataKey="Orders" />
+              </Paper>
+            </Grid>
+            
+          </Grid>
+
+          
+            
+          
         </Container>
       </main>
     </div>
   );
 }
 
-export default DashboardNew;
+export default GenerateReport;

@@ -211,11 +211,12 @@ width:'700px'
     marginBottom:'20px',   
  },
  user1:{
-     width:'100px',
-     height:'100px',
+     width:'150px',
+     height:'150px',
      marginTop:'20px',
      align:'center',
-     marginLeft:'90px'
+     marginLeft:'60px',
+     borderRadius:'80px'
  }
 
   
@@ -324,9 +325,9 @@ export default function EmpInfo() {
            <Paper className={classes.paper}>
                <div className={classes.twocolumn}>
                    <div className={classes.columnleft}>
-                        <img src={user1} className={classes.user1} align='center'></img><br/><br/>
+                        <img src={`/${Dt.emp_img}`} className={classes.user1} align='center'></img><br/><br/>
                         <h3 align='center'>{Dt.name}</h3>
-                        <h2 style={{marginLeft:'40px'}}>Sales Manager</h2>
+                        <h2 style={{marginLeft:'40px'}}>{Dt.role}</h2>
                    </div>
                    <div style={{width:'3px',backgroundColor:'rgb(63, 111, 199)',height:'auto'}}></div>
              

@@ -187,44 +187,24 @@ const styles = {
   }
 };
 
-const schema = yup.object().shape({
-  name: yup.string().required(),
-  email: yup.string().email().required(),
-  job_start_date: yup.string().required(),
-  address: yup.string().required(),
-  role: yup.string().required(),
-  NIC: yup.string().max(10, "Must be 10 Characters.").min(10, "Must be 10 Characters."),
-  phone_no: yup.string().max(10, "Must be 10 Digits.").min(10, "Must be 10 Digits."),
-  password: yup.string().required().min(8).max(15),
-  confirm_password: yup.string().when('password', (password, schema) => {
-      if (password) return schema.required('Confirm Password is required');
-  })
-      .oneOf([yup.ref('password')], 'Passwords must match')
-})
+
 
 
 export default function UpdateEmployee() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
-  //const[LoginStatus, setLoginStatus] = useState();
-
-  const { register, handleSubmit, formState: { errors } } = useForm({
-    resolver: yupResolver(schema),
-});
-
-   const [name,setName] = useState("");
-  // const [NIC,setNIC] = useState("");
-  // const [email,setEmail] = useState("");
-  // const [phone_no,setPhoneNo] = useState("");
-  // const [job_start_date,setJobStartDate] = useState(0);
-  // const [password,setPassword] = useState(0);
-  // const [address,setAddress] = useState("");
-  // const [role,setRole] = useState("");
-  // const [confirm_password,setConfirmPassword] = useState("");
+ 
   
- const {id}=useParams(); 
-  
-  const [newName, setNewName] = useState("");
+ const {id} = useParams();
+ const [Dt, setDt] = useState([])
+ const [newName, setNewName] = useState(0);
+ const [newRole, setNewRole] = useState(0);
+ const [newEmail,setNewEmail]=useState(0);
+ const [newAddress,setNewAddress]=useState(0);
+ const [newNIC,setNewNIC]=useState(0);
+ const [newPhone_no,setNewPhone_no]=useState(0);
+ const [newJob_start_date,setNewJob_start_date]=useState(0);
+
   const [employeeList, setEmployeeList] = useState([]);
   useEffect(()=>{
     axios.get("http://localhost:3001/employees").then((response)=>{
@@ -232,44 +212,34 @@ export default function UpdateEmployee() {
     })
   },[])
 
-  // const getEmployees = () => {
-  //   axios.get('http://localhost:3001/employees').then((response) => {
-  //     setEmployeeList(response.data);
-  //   });
-  // };
+  useEffect(() => {
+    const fetchData = async () => {
+        const response = await axios.get('http://localhost:3001/view', {
+            params: {
+               id: id,
+                
+            }
+        });
   
-  // const viewEmployee =(id)=>{
-  //   console.log(id)
-  //   axios.get(`http://localhost:3001/view/10`).then((response)=>{
-  //     setEmployeeList(response.data)
-  //   });
-  // }
+        setDt(response.data[0]);
+           console.log(response.data[0]);
+    };
+    fetchData();
+  }, [id]);
 
-  // const updateEmployeeDetails = (id) => {
-  //   console.log(id)
-  //   axios.put(`http://localhost:3001/updateEmployee/${id}`, {name: newName}).then(
-  //     (response) => {
-  //       setEmployeeList(employeeList.map((val) => {
-  //         return val.id === id ? { address:val.address,name: newName} : val
-  //       }))
-  //    }
-  //   );
-  // };
-
-  const updateEmployee =(id)=>{
-    console.log('HIi');
-    console.log(id);
-    axios.put(`http://localhost:3001/update/${id}`);
-
+  const updateEmployees = (id) => {
+    axios.put("http://localhost:3001/updateEmployee", {name: newName,role:newRole,email:newEmail,address:newAddress,NIC:newNIC,phone_no:newPhone_no,job_start_date:newJob_start_date,id:id}).then(
+      (response) => {
+        
+        setEmployeeList(Dt.map((val) => {
+          return val.id === id ? {id: val.id, name: val.name, role: val.role,email:val.email,address:val.address,NIC:val.NIC,phone_no:val.phone_no,job_start_date:val.job_start_date, 
+            name: newName,role:newRole,email:newEmail,address:newAddress,NIC:newNIC,phone_no:newPhone_no,job_start_date:newJob_start_date} : val
+          
+        }))
+     }
+    )
+    alert("Employee Edited successfully")  
   };
-
-  const UpdateName=(id)=>{
-    axios.put("http://localhost:3001/updateEmployee",{
-      id:id,
-      name:newName,
-    });
-    setNewName("")
-  }
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -371,18 +341,98 @@ export default function UpdateEmployee() {
            <Typography component="h1" variant="h6" color="inherit" align="center" width="100%" noWrap className={classes.title}>
                   <strong> UPDATE EMPLOYEE DETAILS </strong>
                 </Typography><br/>
-           
-                <Form  onSubmit={updateEmployee} >
-               </Form>
-                {employeeList.map((val,key) => {
-                  return(
-                    <div>
-                      <p>{val.name}</p>
-                      </div>
-                  )
-          
-     
-                        })}      
+
+                <Form >
+                
+                <Form.Group as={Row} controlId="formHorizontalName">
+                  <Form.Label column lg={2} >
+                    Full Name :
+                  </Form.Label>
+                  <Col >
+                    <Form.Control type="text"  defaultValue={Dt.name}
+       onChange={(event)=> {
+         setNewName(event.target.value);
+       }}  required />                     
+                  </Col>
+                </Form.Group><br/>
+
+                <Form.Group as={Row} controlId="formHorizontalName">
+                  <Form.Label column lg={2} >
+                   Employee Role :
+                  </Form.Label>
+                  <Col >
+                  <Form.Control as="select" defaultValue={Dt.role}  onChange={(event)=> { setNewRole(event.target.value);}} >
+                 
+                      <option value="salesmanager">Sales Manager</option>
+                      <option value="deliverymanager">Delivery Manager</option>
+                       <option value="deliveryperson">Delivery Person</option>
+      
+                      </Form.Control>                    
+                  </Col>
+                </Form.Group><br/>
+
+                <Form.Group as={Row} controlId="formHorizontalEmail">
+                  <Form.Label column lg={2} >
+                   Email :
+                  </Form.Label>
+                  <Col >
+                    <Form.Control type="text" defaultValue={Dt.email}  onChange={(event)=> {
+         setNewEmail(event.target.value);
+       }} required />                     
+                  </Col>
+                </Form.Group><br/>
+
+                <Form.Group as={Row} controlId="formHorizontalAddress">
+                  <Form.Label column lg={2} >
+                   Address :
+                  </Form.Label>
+                  <Col >
+                    <Form.Control type="text" defaultValue={Dt.address}  onChange={(event)=> {
+         setNewAddress(event.target.value);
+       }} required />                   
+                  </Col>
+                </Form.Group><br/>
+
+                <Form.Group as={Row} controlId="formHorizontalNIC">
+                  <Form.Label column lg={2} >
+                   NIC :
+                  </Form.Label>
+                  <Col >
+                    <Form.Control type="text" defaultValue={Dt.NIC}  onChange={(event)=> {
+         setNewNIC(event.target.value);
+       }} required />                     
+                  </Col>
+                </Form.Group><br/>
+
+                <Form.Group as={Row} controlId="formHorizontalPhoneNo">
+                  <Form.Label column lg={2} >
+                   Phone No :
+                  </Form.Label>
+                  <Col >
+                    <Form.Control type="text" defaultValue={Dt.phone_no}  onChange={(event)=> {
+         setNewPhone_no(event.target.value);
+       }} required />                   
+                  </Col>
+                </Form.Group><br/>
+
+                <Form.Group as={Row} controlId="formHorizontalJobStartDate">
+                  <Form.Label column lg={2} >
+                   Job Start Date :
+                  </Form.Label>
+                  <Col >
+                    <Form.Control type="text" defaultValue={Dt.job_start_date}  onChange={(event)=> {
+         setNewJob_start_date(event.target.value);
+       }} required />                      
+                  </Col>
+                </Form.Group><br/>
+
+              
+                <div align="center">
+                 <Button  style={{fontSize:'20px',width:'200px'}} type="submit" onClick={() => {updateEmployees(Dt.id)}} >Update</Button>
+                 </div> 
+               
+         </Form>
+                
   
     
           </Paper>

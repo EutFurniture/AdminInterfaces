@@ -202,7 +202,7 @@ export default function EditCategory() {
         }))
      }
     )
-    alert("Category added successfully")  
+    alert("Category Edited successfully")  
   };
   
   const handleDrawerOpen = () => {

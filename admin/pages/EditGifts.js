@@ -1,8 +1,8 @@
-import React from 'react';
+import React,{useEffect,useState} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
-import { useState } from 'react';
 import clsx from 'clsx';
+import {useParams} from "react-router-dom"
 
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import { makeStyles } from '@material-ui/core/styles';
@@ -162,63 +162,77 @@ export default function EditGifts() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
   const [state,setState]=useState({file:'',product_img:'',message:'',success:false})
-  const[name,setName]=useState("");
-  const[price,setPrice]=useState("");
-  const[quantity,setQuantity]=useState("");
-  const[image,setImage]=useState("");
-  const [progressbar,setProgressbar] = useState(0);
+  const {ID} = useParams();
+ const [Dt, setDt] = useState([])
+ const [newName, setNewName] = useState(0);
+ const [newPrice, setNewPrice] = useState(0);
+ const [newGift_img,setNewGift_img]=useState(0);
+ const [newQuantity,setNewQuantity]=useState(0);
  
-  const submitForm =(e) =>{
-    e.preventDefault();
-      
-    if(state.file)
-    {
-      let formData=new FormData();
-      formData.append('file',state.file)
+ const [giftList,setGiftList]=useState([])
+ useEffect(()=>{
+   axios.get("http://localhost:3001/loadGift").then((response)=>{
+     setGiftList(response.data)
+   })
+ },[])
 
-   axios.post('http://localhost:3001/imageUpload',formData,{
+ useEffect(() => {
+  const fetchData = async () => {
+      const response = await axios.get('http://localhost:3001/viewGift', {
+          params: {
+              ID: ID,
+              
+          }
+      });
+
+      setDt(response.data[0]);
+         console.log(response.data[0]);
+  };
+  fetchData();
+}, [ID]);
+
+const updateGift = (ID) => {
+  
+    let formData=new FormData();
+    formData.append('file',state.file) 
+    axios.post('http://localhost:3001/imageUpload',formData,{
         'content-Type':'multipart/form-data',
       })
 
-      axios.post('http://localhost:3001/addGift', {
-     
-       
-        image:state.file.name,
-        name:name,
-        price:price,
-        quantity:quantity,
-       
+  axios.put("http://localhost:3001/updateGift", {name: newName,price:newPrice,gift_img:newGift_img,quantity:newQuantity,ID: ID}).then(
+    (response) => {
+      
+      setGiftList(Dt.map((val) => {
+        return val.ID === ID ? {ID: val.ID, name: val.name, price: val.price,gift_img:val.gift_img,quantity:val.quantity, 
+          name: newName,price:newPrice,gift_img:newGift_img,quantity:newQuantity } : val
         
-      }).then(()=>{
-        alert('Gift added successfully');
-        window.location.href='/ManageGifts'
-      })
-     
-
-}else{
-  setState({
-    ...state,
-    message:'Please select image'
-  })
-}
-
-
-}
-
-  const handleInput =(e) =>{
-    let reader =new FileReader();
-    let file=e.target.files[0]
-    reader.onloadend =() =>{
-      setState({
-        ...state,
-        file:file,
-        gift_img:reader.result,
-        message:""
-      })
-    }
-    reader.readAsDataURL(file);
-  }
+      }))
   
+
+  alert("Gift Edited successfully")  
+  
+    }
+  
+  )
+  
+};
+
+const handleInput =(e) =>{
+  let reader =new FileReader();
+  let file=e.target.files[0]
+  reader.onloadend =() =>{
+    setState({
+      ...state,
+      file:file,
+      gift_img:reader.result,
+      message:""
+    })
+  }
+  reader.readAsDataURL(file);
+}
+  
+
+
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -325,17 +339,18 @@ export default function EditGifts() {
             </Typography><br/>
 
             
-            <Form  onSubmit={submitForm} >
+            <Form>
 
 <Form.Group as={Row} controlId="formHorizontalName">
      <Form.Label column lg={2} >
       Gift Name :
      </Form.Label>
      <Col >
-       <Form.Control type="text" placeholder="chair,table and etc" 
-       onChange={(event)=> {
-         setName(event.target.value);
-       }}
+       <Form.Control type="text" 
+      defaultValue={Dt.name}
+      onChange={(event)=> {
+        setNewName(event.target.value);
+      }}
        />
      </Col>
    </Form.Group><br/>
@@ -345,9 +360,9 @@ export default function EditGifts() {
      Price :
      </Form.Label>
      <Col >
-       <Form.Control type="text" placeholder="Rs.xxxx.xx" 
+       <Form.Control type="text" defaultValue={Dt.price}
        onChange={(event)=> {
-         setPrice(event.target.value);
+         setNewPrice(event.target.value);
        }}
        />
      </Col>
@@ -358,14 +373,13 @@ export default function EditGifts() {
      <Form.Label column lg={2}>
       Gift Image :</Form.Label>
      <Col >
-       <Form.Control type="file" name="img" className={classes.imageInput} onChange={handleInput} />
+       <Form.Control type="text" name="img" defaultValue={Dt.gift_img}   onChange={(event)=> {
+         setNewGift_img(event.target.value);
+       }} />
      </Col>
      </Form.Group>  
     
-{state.message && <h6 className={classes.mess}>{state.message}</h6>}            
-     <div style={{marginLeft:'227px'}}>
-{state.gift_img && (<img src={state.gift_img}  width="20%" height="20%"  alt="preview" />)}
-</div><br/>
+
    
   
    <Form.Group as={Row} controlId="formHorizontalQuantity">
@@ -373,16 +387,16 @@ export default function EditGifts() {
      Quantity :
      </Form.Label>
      <Col >
-       <Form.Control type="text" placeholder="5" 
+       <Form.Control type="text" defaultValue={Dt.quantity}
        onChange={(event)=> {
-         setQuantity(event.target.value);
+         setNewQuantity(event.target.value);
        }}
        />
      </Col>
    </Form.Group><br/>
    
        <div align="center">
-       <Button  type="submit"   style={{fontSize:'20px',width:'200px'}} >Update</Button>
+       <Button  type="submit"   style={{fontSize:'20px',width:'200px'}} onClick={() => {updateGift(Dt.ID)}}>Update</Button>
        </div>
       
 

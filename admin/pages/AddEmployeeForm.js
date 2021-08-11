@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import clsx from 'clsx';
 import axios from "axios";
-
+import Box from '@material-ui/core/Box';
+import Link from '@material-ui/core/Link'
 import Form from 'react-bootstrap/Form';
 import { Button } from 'react-bootstrap';
 import { Row } from 'react-bootstrap';
@@ -32,6 +33,19 @@ import * as yup from "yup";
 
 
 import { mainListItems, Logout } from './listItems';
+
+function Copyright() {
+  return (
+    <Typography variant="body2" color="textSecondary" align="center">
+      {'Copyright © '}
+      <Link color="inherit" href="https://material-ui.com/">
+        Eut Furniture
+      </Link>{' '}
+      {new Date().getFullYear()}
+      {'.'}
+    </Typography>
+  );
+}
 
 
 const drawerWidth = 240;
@@ -367,9 +381,9 @@ export default function AddEmployeeForm() {
                       <Col >
                       <Form.Control as="select" {...register('role')} >
                       <option value=" ">SELECT</option>
-                          <option value="salesmanager">Sales Manager</option>
-                          <option value="deliverymanager">Delivery Manager</option>
-                           <option value="deliveryperson">Delivery Person</option>
+                          <option value="Sales Manager">Sales Manager</option>
+                          <option value="Delivery Manager">Delivery Manager</option>
+                           <option value="Delivery Person">Delivery Person</option>
           
                           </Form.Control>
                         {errors.name?.message && <p className=" errormessage" >{errors.name?.message}</p>}                        
@@ -459,6 +473,9 @@ export default function AddEmployeeForm() {
         </Grid>
 
       </Grid>
+      <Box pt={4}>
+            <Copyright />
+          </Box>
         </Container>
       </main>
     </div>
